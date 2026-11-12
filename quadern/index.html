@@ -80,9 +80,27 @@ table.nt{border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-
 .nt td.as{min-width:46px;font-weight:800}
 .AE,.AN{color:var(--okt)} .AS{color:var(--migt)} .NA{color:var(--kot)}
 .nt td.np input{width:16px;height:16px}
-.nt td.obs{min-width:200px} .nt td.obs input{width:100%;height:32px;border:0;background:transparent;padding:0 8px;font-size:13px;outline:none}
-.nt td.obs input:focus{box-shadow:inset 0 0 0 2px var(--focus)}
-.nt tr.isnp td:not(.nom):not(.np):not(.obs){opacity:.35}
+.nt td.ob{min-width:44px}
+.obb{border:0;background:none;cursor:pointer;font-size:16px;width:100%;height:32px;color:var(--soft);opacity:.55}
+.obb.te{opacity:1}
+.obb:hover,.obb:focus-visible{opacity:1;background:var(--sel);outline:none}
+.nb{all:unset;cursor:pointer;display:block;width:100%;overflow:hidden;text-overflow:ellipsis;padding:6px 0}
+.nb:hover,.nb:focus-visible{color:var(--focus);text-decoration:underline}
+.nt tr.isnp td:not(.nom):not(.np):not(.ob){opacity:.35}
+dialog.dlgal{border:0;border-radius:14px;padding:0;width:min(580px,calc(100vw - 32px));max-width:none;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog.dlgal::backdrop{background:rgba(20,20,26,.45)}
+.dlg{padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.dlg .dcap{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:10px}
+.dlg .t{font-size:11.5px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.05em}
+.dlg h2{margin:2px 0 0;font-size:19px}
+.dlg .dnota{font-size:15px;white-space:nowrap;text-align:right}
+.dlg label.tx{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px}
+.dlg label.tx span{font-weight:500;color:var(--soft);font-size:12px}
+.dlg textarea{width:100%;min-height:84px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg);resize:vertical;font-size:13.5px}
+.dlg .chk{display:flex;gap:8px;align-items:center;font-weight:600;font-size:13px}
+.dlg .dbtn{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dlg .dbtn .sp{flex:1}
+.rt .nb{padding:0;font-weight:700}
 .nt tr.isnp td.c input{pointer-events:none}
 .nt tfoot td{background:var(--bg);font-size:12px;color:var(--soft);padding:6px 4px;font-weight:600}
 .nt tfoot td.nom{background:var(--bg);color:var(--ink)}
@@ -187,10 +205,14 @@ table.rt{width:100%;border-collapse:collapse;background:var(--card);font-variant
   #printFitxes .fitxa:last-child{break-after:auto}
   #informe .ipag{break-after:page}
   #informe .ipag:last-child{break-after:auto}
-  #informe table.nt{width:100%}
-  #informe .nt th,#informe .nt td{font-size:10.5px;height:auto!important;padding:3px 2px;position:static!important}
-  #informe .nom{min-width:0;max-width:none;font-size:10.5px;position:static}
-  #informe .nt td.obs{white-space:normal;min-width:0;max-width:150px;text-align:left;font-size:9px}
+  #informe table.nt{width:100%;table-layout:fixed}
+  #informe .nt th,#informe .nt td{font-size:var(--fs,10px);height:auto!important;padding:3px 1px;position:static!important;white-space:normal;overflow:hidden;min-width:0!important;width:auto}
+  #informe .nt th.nom{width:var(--wn,42mm)}
+  #informe .nom{min-width:0;max-width:none;position:static;padding:2px 4px!important;white-space:nowrap!important;text-overflow:ellipsis}
+  #informe .num{width:auto;margin-right:3px}
+  #informe .obsT{margin-top:10px}
+  #informe tr{break-inside:avoid}
+  #informe .obsT td:first-child{white-space:nowrap;font-weight:700;width:1%}
   #informe .rt td,#informe .rt th{font-size:10px;padding:4px 6px;position:static}
   #informe .dues{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
   #informe h2{font-size:16px;margin:0 0 4px}
@@ -236,7 +258,7 @@ table.rt{width:100%;border-collapse:collapse;background:var(--card);font-variant
 
   <!-- NOTES -->
   <section id="t-notes" role="tabpanel">
-    <div class="ajuda"><b>Entrar punts:</b> escriu els punts (0,5 o 0.5). <kbd>t</kbd> tot · <kbd>m</kbd> meitat · <kbd>q</kbd> 75 % (error de signe o unitats) · <kbd>0</kbd> res. <kbd>Enter</kbd> passa a l'apartat següent; les fletxes et mouen. <b>Es desa sol</b> en aquest navegador i, si l'has connectat, al Google Sheets. Observacions: només per a tu.</div>
+    <div class="ajuda"><b>Entrar punts:</b> escriu els punts (0,5 o 0.5). <kbd>t</kbd> tot · <kbd>m</kbd> meitat · <kbd>q</kbd> 75 % (error de signe o unitats) · <kbd>0</kbd> res. <kbd>Enter</kbd> passa a l'apartat següent; les fletxes et mouen. Clica el <b>nom</b> d'un alumne (o ✎) per escriure-hi observacions, el comentari o marcar NP. <b>Es desa sol</b> en aquest navegador i, si l'has connectat, al Google Sheets.</div>
     <div id="notesBox"></div>
   </section>
 
@@ -300,6 +322,15 @@ table.rt{width:100%;border-collapse:collapse;background:var(--card);font-variant
     </div>
   </section>
 
+  <dialog class="dlgal" id="dlgAl" aria-labelledby="dlgNom">
+    <form method="dialog" class="dlg">
+      <div class="dcap"><div><div class="t" id="dlgAct"></div><h2 id="dlgNom"></h2></div><div class="dnota" id="dlgNota"></div></div>
+      <label class="chk"><input type="checkbox" id="dlgNp"> No presentat (NP)</label>
+      <label class="tx">Observacions <span>Només per a tu: surten a l'informe del grup i a l'Excel, no a la fitxa de l'alumne.</span><textarea id="dlgObs"></textarea></label>
+      <label class="tx">Comentari per a l'alumne <span>Surt a la seva fitxa.</span><textarea id="dlgCom"></textarea></label>
+      <div class="dbtn"><button type="button" class="btn sm" id="dlgSug">↻ Suggereix el comentari</button><span class="sp"></span><button type="button" class="btn" id="dlgAnt" aria-label="Alumne anterior">◂</button><button type="button" class="btn" id="dlgSeg" aria-label="Alumne següent">▸</button><button class="btn pri" value="fet">Fet</button></div>
+    </form>
+  </dialog>
   <div id="informe"></div>
   <div id="printFitxes"></div>
 </div>
@@ -455,7 +486,7 @@ function construeixNotes(){
   let h='<div class="tw"><table class="nt" id="tNotes"><thead><tr><th class="nom" rowspan="3">Alumne</th>';
   B.forEach(b=>h+=`<th class="ex" colspan="${b.aps.length}">${esc(b.titol)}</th>`);
   if(B.length>1)h+=`<th class="ex" colspan="${B.length}">Subtotals</th>`;
-  h+=`<th class="ex" rowspan="3">Total<br>/${fmt(max)}</th>${max!==10?'<th rowspan="3">Sobre<br>10</th>':''}<th rowspan="3">Assol.</th><th rowspan="3">NP</th><th rowspan="3">Observacions</th></tr><tr>`;
+  h+=`<th class="ex" rowspan="3">Total<br>/${fmt(max)}</th>${max!==10?'<th rowspan="3">Sobre<br>10</th>':''}<th rowspan="3">Assol.</th><th rowspan="3" class="hnp">NP</th><th rowspan="3" class="hob">Obs.</th></tr><tr>`;
   APS.forEach(p=>h+=`<th class="${p.first?'ex':''}">${esc(p.l)}</th>`);
   if(B.length>1)B.forEach((b,k)=>h+=`<th class="${k===0?'ex':''}">${k+1}</th>`);
   h+='</tr><tr>';
@@ -463,19 +494,20 @@ function construeixNotes(){
   if(B.length>1)B.forEach((b,k)=>h+=`<th class="${k===0?'ex':''}">/${fmt(b.aps.reduce((s,p)=>s+(+p.max||0),0))}</th>`);
   h+='</tr></thead><tbody>';
   g.alumnes.forEach((al,i)=>{
-    h+=`<tr data-i="${i}"><td class="nom" title="${esc(al.nom)}"><span class="num">${i+1}</span>${esc(al.nom)}</td>`;
+    h+=`<tr data-i="${i}"><td class="nom"><button class="nb" data-ob="${i}" title="${esc(al.nom)}: obre observacions i comentari"><span class="num">${i+1}</span>${esc(al.nom)}</button></td>`;
     APS.forEach((p,j)=>h+=`<td class="c${p.first?' first':''}"><input inputmode="decimal" autocomplete="off" data-i="${i}" data-j="${j}" aria-label="${esc(al.nom)}, ${esc(p.l)}"></td>`);
     if(B.length>1)B.forEach((b,k)=>h+=`<td class="sub${k===0?' first':''}"></td>`);
-    h+=`<td class="tot first"></td>${max!==10?'<td class="n10"></td>':''}<td class="as"></td><td class="np"><input type="checkbox" aria-label="${esc(al.nom)} no presentat"></td><td class="obs"><input data-obs="${i}" aria-label="Observacions de ${esc(al.nom)}"></td></tr>`;
+    h+=`<td class="tot first"></td>${max!==10?'<td class="n10"></td>':''}<td class="as"></td><td class="np"><input type="checkbox" aria-label="${esc(al.nom)} no presentat"></td><td class="ob"><button class="obb" data-ob="${i}" aria-label="Observacions de ${esc(al.nom)}">✎</button></td></tr>`;
   });
   h+='</tbody><tfoot><tr><td class="nom">Encert del grup</td>';
   APS.forEach((p,j)=>h+=`<td class="pc" data-pc="${j}"></td>`);
   if(B.length>1)B.forEach((b,k)=>h+=`<td data-pcx="${k}"></td>`);
-  h+=`<td id="mitTot"></td>${max!==10?'<td id="mit10"></td>':''}<td></td><td></td><td></td></tr></tfoot></table></div>`;
+  h+=`<td id="mitTot"></td>${max!==10?'<td id="mit10"></td>':''}<td></td><td class="np"></td><td class="ob"></td></tr></tfoot></table></div>`;
   $('notesBox').innerHTML=h;
   const t=$('tNotes');rows=[...t.tBodies[0].rows];inputs=[...t.querySelectorAll('td.c input')];
   rows.forEach((_,i)=>pinta(i));peuNotes();
   t.addEventListener('input',onInput);t.addEventListener('change',onChange);t.addEventListener('keydown',onKey);
+  t.addEventListener('click',ev=>{const b=ev.target.closest('[data-ob]');if(b)obreAl(+b.dataset.ob)});
   t.addEventListener('focusin',ev=>{if(ev.target.dataset.j!==undefined)ev.target.select()});
   t.addEventListener('focusout',ev=>{const el=ev.target;if(el.dataset.j!==undefined){const r=reg(A().id,G().alumnes[+el.dataset.i].id);const x=r&&r.p[APS[+el.dataset.j].id];if(typeof x==='number')el.value=fmt(x,3)}});
 }
@@ -491,7 +523,7 @@ function pinta(i){
   else if(c.any){tot.textContent=fmt(c.tot);if(n10)n10.textContent=fmt(c.n10);const q=assol(c.n10);as.textContent=q;as.className='as '+q}
   else{tot.textContent='';as.textContent='';as.className='as';if(n10)n10.textContent=''}
   tr.querySelector('.np input').checked=c.np;
-  const ob=tr.querySelector('.obs input');if(document.activeElement!==ob)ob.value=c.r.obs||'';
+  const ob=tr.querySelector('.obb'),to=(c.r.obs||'').trim();ob.textContent=to?'📝':'✎';ob.classList.toggle('te',!!to);ob.title=to?to:'Afegeix observacions';
 }
 function peuNotes(){
   const g=G(),a=A(),P=pctAps(a,g),F=fets(a,g),t=$('tNotes');if(!t)return;
@@ -552,12 +584,12 @@ function construeixResultats(){
   <div class="ajuda">El <b>comentari per a l'alumne</b> surt a la seva fitxa i es desa sol. <b>Suggereix</b> en proposa un a partir de les notes. <button class="btn sm" id="bSugTots" style="margin-left:8px">Suggereix els buits</button></div>
   <div class="rtw"><table class="rt" id="tRes"><thead><tr><th>Alumne</th><th>${pa?esc(pa.titol):'Anterior'}</th><th>Nota /10</th><th>Canvi</th><th>Assol.</th><th>Comentari per a l'alumne</th></tr></thead><tbody>`;
   g.alumnes.forEach((al,i)=>{const c=calc(a,al.id),cv=canvi(a,g,al);
-    h+=`<tr><td><b>${esc(al.nom)}</b></td><td class="n">${cv.prev!=null?fmt(cv.prev):'—'}</td><td class="n tot">${c.np?'NP':c.any?fmt(c.n10):'—'}</td><td class="n"><span class="ten ${cv.c}">${cv.txt}</span></td><td class="n">${c.any&&!c.np?`<b class="${assol(c.n10)}">${assol(c.n10)}</b>`:''}</td>
+    h+=`<tr><td><button class="nb" data-ob="${i}">${esc(al.nom)}</button></td><td class="n">${cv.prev!=null?fmt(cv.prev):'—'}</td><td class="n tot">${c.np?'NP':c.any?fmt(c.n10):'—'}</td><td class="n"><span class="ten ${cv.c}">${cv.txt}</span></td><td class="n">${c.any&&!c.np?`<b class="${assol(c.n10)}">${assol(c.n10)}</b>`:''}</td>
     <td><textarea data-com="${i}" aria-label="Comentari per a ${esc(al.nom)}">${esc(c.r.com||'')}</textarea><button class="sug" data-sug="${i}">↻ Suggereix</button></td></tr>`});
   $('resBox').innerHTML=h+'</tbody></table></div>';
   $('selComp').onchange=e=>{a.compara=a.compara||{};a.compara[g.id]=e.target.value;save();construeixResultats()};
   $('tRes').addEventListener('input',ev=>{const el=ev.target;if(el.dataset.com!==undefined){reg(a.id,g.alumnes[+el.dataset.com].id,true).com=el.value;save()}});
-  $('tRes').addEventListener('click',ev=>{const b=ev.target.closest('[data-sug]');if(!b)return;const al=g.alumnes[+b.dataset.sug],s=suggerir(a,g,al);if(!s){avisa('Aquest alumne encara no té notes.');return}reg(a.id,al.id,true).com=s;save();b.previousElementSibling.value=s});
+  $('tRes').addEventListener('click',ev=>{const o=ev.target.closest('[data-ob]');if(o){obreAl(+o.dataset.ob);return}const b=ev.target.closest('[data-sug]');if(!b)return;const al=g.alumnes[+b.dataset.sug],s=suggerir(a,g,al);if(!s){avisa('Aquest alumne encara no té notes.');return}reg(a.id,al.id,true).com=s;save();b.previousElementSibling.value=s});
   $('bSugTots').onclick=()=>{let n=0;g.alumnes.forEach(al=>{const r=reg(a.id,al.id);if(!(r&&r.com||'').trim()){const s=suggerir(a,g,al);if(s){reg(a.id,al.id,true).com=s;n++}}});save();construeixResultats();avisa(n?`${n} comentaris suggerits. Revisa'ls.`:'No hi havia comentaris buits amb notes.')};
 }
 
@@ -606,6 +638,27 @@ $('selAl').onchange=e=>{D.ui.al=+e.target.value;save();construeixFitxes()};
 $('bAnt').onclick=()=>{if(D.ui.al>0){D.ui.al--;save();construeixFitxes()}};
 $('bSeg').onclick=()=>{const g=G();if(g&&D.ui.al<g.alumnes.length-1){D.ui.al++;save();construeixFitxes()}};
 
+
+/* ====================== finestra de l'alumne ====================== */
+let dlgI=-1;
+function obreAl(i){
+  const g=G(),a=A();if(!g||!a||!g.alumnes[i])return;dlgI=i;const al=g.alumnes[i],c=calc(a,al.id);
+  $('dlgAct').textContent=a.titol;$('dlgNom').textContent=`${i+1}. ${al.nom}`;
+  $('dlgNota').innerHTML=c.np?'<b>NP</b>':c.any?`<b>${fmt(c.n10)}</b> /10 · <b class="${assol(c.n10)}">${assol(c.n10)}</b>`:'<span style="color:var(--soft)">Sense nota</span>';
+  $('dlgNp').checked=c.np;$('dlgObs').value=c.r.obs||'';$('dlgCom').value=c.r.com||'';
+  $('dlgAnt').disabled=i===0;$('dlgSeg').disabled=i===g.alumnes.length-1;
+  const d=$('dlgAl');if(!d.open){try{d.showModal()}catch(e){d.setAttribute('open','')}}
+  $('dlgObs').focus();
+}
+const dlgReg=()=>reg(A().id,G().alumnes[dlgI].id,true);
+$('dlgObs').addEventListener('input',e=>{dlgReg().obs=e.target.value;save()});
+$('dlgCom').addEventListener('input',e=>{dlgReg().com=e.target.value;save()});
+$('dlgNp').addEventListener('change',e=>{dlgReg().np=e.target.checked;save();obreAl(dlgI)});
+$('dlgSug').onclick=()=>{const s=suggerir(A(),G(),G().alumnes[dlgI]);if(!s){avisa('Aquest alumne encara no té notes.');return}$('dlgCom').value=s;dlgReg().com=s;save()};
+$('dlgAnt').onclick=()=>{if(dlgI>0)obreAl(dlgI-1)};
+$('dlgSeg').onclick=()=>{const g=G();if(g&&dlgI<g.alumnes.length-1)obreAl(dlgI+1)};
+$('dlgAl').addEventListener('close',()=>{if(D.ui.tab==='notes'&&$('tNotes')){rows.forEach((_,k)=>pinta(k));peuNotes()}else if(D.ui.tab==='resultats')construeixResultats()});
+
 /* ====================== impressió ====================== */
 function imprimeix(mode,html){
   const box=$(mode==='informe'?'informe':'printFitxes');box.innerHTML=html;document.body.classList.add('p-'+mode);
@@ -616,11 +669,16 @@ $('bInforme').onclick=()=>{
   const g=G(),a=A();if(!g||!a||!g.alumnes.length){avisa('Tria un grup i una activitat.');return}
   const tabAnt=D.ui.tab;construeixNotes();const t=$('tNotes'),cl=t.cloneNode(true),oi=[...t.querySelectorAll('input')];
   [...cl.querySelectorAll('input')].forEach((inp,k)=>{const o=oi[k];inp.replaceWith(document.createTextNode(o.type==='checkbox'?(o.checked?'NP':''):o.value))});cl.removeAttribute('id');
+  cl.querySelectorAll('.hnp,.hob,td.np,td.ob').forEach(x=>x.remove());cl.querySelectorAll('.nb').forEach(b=>b.replaceWith(...b.childNodes));
+  const ncol=apsDe(a).length+(a.blocs.length>1?a.blocs.length:0)+(maxDe(a)!==10?3:2);
+  cl.style.setProperty('--fs',(ncol<=22?10.5:ncol<=28?9.5:ncol<=34?8.5:7.5)+'px');cl.style.setProperty('--wn',(ncol<=28?44:36)+'mm');
+  const ambObs=g.alumnes.map((al,i)=>({al,i,o:((reg(a.id,al.id)||{}).obs||'').trim()})).filter(x=>x.o);
+  const obsT=ambObs.length?`<table class="rt obsT"><thead><tr><th>Alumne</th><th>Observacions</th></tr></thead><tbody>${ambObs.map(x=>`<tr><td>${x.i+1}. ${esc(x.al.nom)}</td><td>${esc(x.o)}</td></tr>`).join('')}</tbody></table>`:'';
   construeixResultats();const tR=$('tRes'),res=tR.cloneNode(true),ot=[...tR.querySelectorAll('textarea')];res.removeAttribute('id');
   [...res.querySelectorAll('textarea')].forEach((ta,k)=>{const d=document.createElement('div');d.textContent=ot[k].value;ta.replaceWith(d)});res.querySelectorAll('.sug').forEach(b=>b.remove());
   const pa=anterior(a,g);
   const cap=`<h2>${esc(a.titol)} · ${esc(g.nom)} · Informe del grup</h2><p style="margin:0 0 8px;color:#62616B">${esc([D.cfg.institut,g.nivell,g.assignatura].filter(Boolean).join(' · '))} · ${esc(dataCat(a.data))} · generat el ${new Date().toLocaleDateString('ca-ES')}</p>`;
-  const html=`<div class="ipag">${cap}<div class="tiles">${tilesHTML(a,g)}</div>${cl.outerHTML}</div><div class="ipag"><h2>Resultats per apartat i evolució</h2><div class="dues"><div class="panell"><h3>Encert per apartat</h3><div class="barres">${barresHTML(a,g)}</div></div><div class="panell"><h3>Canvi respecte a: ${pa?esc(pa.titol):'—'}</h3>${compHTML(a,g)}</div></div>${res.outerHTML}</div>`;
+  const html=`<div class="ipag">${cap}<div class="tiles">${tilesHTML(a,g)}</div>${cl.outerHTML}${obsT}</div><div class="ipag"><h2>Resultats per apartat i evolució</h2><div class="dues"><div class="panell"><h3>Encert per apartat</h3><div class="barres">${barresHTML(a,g)}</div></div><div class="panell"><h3>Canvi respecte a: ${pa?esc(pa.titol):'—'}</h3>${compHTML(a,g)}</div></div>${res.outerHTML}</div>`;
   mostra(tabAnt);imprimeix('informe',html);avisa('Tria «Desa com a PDF». Si no surten els colors, activa «Gràfics de fons».');
 };
 $('bFitxesPdf').onclick=()=>{const g=G(),a=A();if(!g||!a)return;const L=g.alumnes.filter(al=>{const c=calc(a,al.id);return c.any||c.np});if(!L.length){avisa('Encara no hi ha notes.');return}imprimeix('fitxes',L.map(al=>fitxaHTML(g,a,al)).join(''));avisa(`${L.length} fitxes, una per pàgina.`)};
