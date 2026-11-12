@@ -190,6 +190,30 @@ table.rt{width:100%;border-collapse:collapse;background:var(--card);font-variant
 .cfg textarea{width:100%;min-height:340px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--card);font:13px/1.5 ui-monospace,Consolas,monospace}
 .cfg h3{margin:0 0 8px}
 .cfg p{margin:0 0 8px;color:var(--soft);font-size:13px}
+/* bloqueig */
+.pany{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 28px;width:min(520px,100%);display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 40px rgba(0,0,0,.08)}
+.pcard form,.pcard>div{display:flex;flex-direction:column;gap:12px}
+.pcard [hidden]{display:none!important}
+.pcap{flex-direction:row!important;align-items:center;gap:14px!important;border-bottom:1px solid var(--line);padding-bottom:12px}
+.plock{font-size:30px}
+.pcap h1{margin:0;font-size:21px}
+.psub{color:var(--soft);font-size:13px}
+.pcard h2{margin:0;font-size:17px}.pcard h3{margin:0;font-size:14px}
+.pcard p{margin:0;font-size:13.5px}
+.psoft{color:var(--soft)}
+.pl{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px}
+.pl span,.chk span{font-weight:500;color:var(--soft);font-size:12px}
+.pl input{width:100%;font-size:15px;padding:9px 11px}
+.chk{display:flex;gap:8px;align-items:center;font-weight:600;font-size:13px}
+.pbig{padding:10px 14px;font-size:15px}
+.perr{color:var(--kot);font-weight:600;font-size:13px;min-height:1em}
+.lnk{border:0;background:none;color:var(--focus);font-weight:600;cursor:pointer;padding:0;align-self:flex-start}
+.pcodi{font:700 20px/1.4 ui-monospace,Consolas,monospace;letter-spacing:.06em;background:var(--bg);border:2px dashed var(--line);border-radius:10px;padding:14px;text-align:center;user-select:all;word-break:break-all}
+.pfila{flex-direction:row!important;align-items:center;gap:10px!important}
+.pbloc{border:1px solid var(--line);border-radius:12px;padding:14px}
+.pdet summary{cursor:pointer;color:var(--focus);font-weight:600;font-size:13px}
+.pdet[open] summary{margin-bottom:8px}
 /* impressió */
 #informe,#printFitxes{display:none}
 @page land{size:A4 landscape;margin:10mm}
@@ -199,6 +223,7 @@ table.rt{width:100%;border-collapse:collapse;background:var(--card);font-variant
   :root{--bg:#F6F5F1;--card:#fff;--ink:#1C1C22;--soft:#62616B;--line:#DDDAD2;--head:#24242C;--ok:#E3F3E8;--okt:#0E6A35;--mig:#FFF2D3;--migt:#8A5A00;--ko:#FCE6E3;--kot:#A8261D;color-scheme:light}
   body{background:#fff;font-size:11px}
   .wrap>*:not(#informe):not(#printFitxes){display:none!important}
+  .pany{display:none!important}
   body.p-informe #informe{display:block;page:land}
   body.p-fitxes #printFitxes{display:block}
   #printFitxes .fitxa{page:port;break-after:page;border:0;border-radius:0;padding:0;max-width:none}
@@ -221,13 +246,64 @@ table.rt{width:100%;border-collapse:collapse;background:var(--card);font-variant
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="pany" id="pany" hidden>
+  <div class="pcard">
+    <div class="pcap"><span class="plock" aria-hidden="true">🔒</span><div><h1>Quadern de notes</h1><div class="psub" id="pSub">Dades protegides amb contrasenya</div></div></div>
+    <form id="pEntra" hidden>
+      <label class="pl">Contrasenya<input type="password" id="pwE" autocomplete="current-password" required></label>
+      <label class="chk"><input type="checkbox" id="recE"> Recorda'm en aquest ordinador <span>(només si és el teu)</span></label>
+      <button class="btn pri pbig">Entra</button>
+      <p class="perr" id="errE" role="alert"></p>
+      <button type="button" class="lnk" id="aOblit">He oblidat la contrasenya</button>
+    </form>
+    <form id="pCrea" hidden>
+      <p id="creaTxt"></p>
+      <label class="pl">Contrasenya nova <span>(mínim 8 caràcters)</span><input type="password" id="pw1" autocomplete="new-password" minlength="8" required></label>
+      <label class="pl">Repeteix-la<input type="password" id="pw2" autocomplete="new-password" required></label>
+      <details class="pdet"><summary>Ja tinc un codi de recuperació d'un altre ordinador</summary><label class="pl">Codi de recuperació <span>(si el poses, serà el mateix a tots els ordinadors)</span><input type="text" id="codiCrea" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"></label></details>
+      <label class="chk" id="v2box" hidden><input type="checkbox" id="esbV2" checked> Esborra també d'aquest ordinador les dades de la web de notes antiga <span>(ja són dins el quadern)</span></label>
+      <label class="chk"><input type="checkbox" id="recC"> Recorda'm en aquest ordinador <span>(només si és el teu)</span></label>
+      <button class="btn pri pbig">Protegeix el quadern</button>
+      <p class="perr" id="errC" role="alert"></p>
+    </form>
+    <div id="pCodi" hidden>
+      <p><b>Aquest és el teu codi de recuperació.</b> Si mai oblides la contrasenya, amb aquest codi en poses una de nova sense perdre res. Guarda'l fora d'aquest ordinador: per exemple, envia-te'l per correu o apunta'l a l'agenda.</p>
+      <div class="pcodi" id="codiTxt"></div>
+      <div class="pfila"><button type="button" class="btn" id="bCopiaCodi">Copia el codi</button><span class="msg" id="codiMsg"></span></div>
+      <p class="psoft">Fes-lo servir també quan protegeixis el quadern en un altre ordinador i tindràs un sol codi per a tot.</p>
+      <label class="chk"><input type="checkbox" id="codiOk"> L'he guardat en un lloc segur</label>
+      <button type="button" class="btn pri pbig" id="bCodiFet" disabled>Continua</button>
+    </div>
+    <div id="pRec" hidden>
+      <h2>Recupera l'accés</h2>
+      <form id="fRecCodi" class="pbloc">
+        <h3>1 · Amb el codi de recuperació</h3>
+        <label class="pl">Codi de recuperació<input type="text" id="codiIn" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" required></label>
+        <label class="pl">Contrasenya nova <span>(mínim 8 caràcters)</span><input type="password" id="pwN1" autocomplete="new-password" minlength="8" required></label>
+        <label class="pl">Repeteix-la<input type="password" id="pwN2" autocomplete="new-password" required></label>
+        <button class="btn pri">Recupera i entra</button>
+        <p class="perr" id="errR" role="alert"></p>
+      </form>
+      <div class="pbloc">
+        <h3>2 · Sense el codi: recupera-ho del Google Sheets</h3>
+        <p class="psoft">S'esborren les dades d'aquest ordinador i tries una contrasenya nova. Després, a <b>⚙ Dades ▸ Google Sheets</b>, connectes amb l'URL i la clau i es carrega tot. Si no recordes la clau: a l'Apps Script executa «configura» i la tornaràs a veure. Només perds el que no s'hagués desat al Sheets.</p>
+        <button type="button" class="btn del" id="bReset">Esborra aquest ordinador i comença de nou</button>
+        <span class="confirma" id="confReset">Segur? <button type="button" class="btn sm del" id="bResetSi">Sí, esborra</button><button type="button" class="btn sm" id="bResetNo">No</button></span>
+      </div>
+      <button type="button" class="lnk" id="aTorna">← Torna a entrar amb la contrasenya</button>
+    </div>
+    <p class="perr" id="errCrypto" hidden>Aquest navegador no permet xifrar les dades. Obre la web amb Chrome, Edge o Firefox actualitzats.</p>
+  </div>
+</div>
+
+<div class="wrap" id="app" hidden>
   <div class="top">
     <div><h1>Quadern de notes</h1><div class="sub" id="subt"></div><div class="sy" id="syEstat" role="status"></div></div>
     <div class="sels">
       <label for="selGrup">Grup</label><select id="selGrup"></select>
       <label for="selAct">Activitat</label><select id="selAct"></select>
       <button class="btn sm" id="bNovaAct">+ Nova activitat</button>
+      <button class="btn sm" id="bBloq" title="Bloqueja el quadern">🔒 Bloqueja</button>
     </div>
   </div>
 
@@ -307,8 +383,15 @@ table.rt{width:100%;border-collapse:collapse;background:var(--card);font-variant
         <label>Clau<input type="text" id="syClau" autocomplete="off" spellcheck="false"></label></div>
         <div class="bar"><button class="btn pri" id="bSyCon">Connecta</button><button class="btn" id="bSyAra">Desa ara</button><button class="btn" id="bSyReg">Refés tots els fulls del Sheets</button><button class="btn del" id="bSyDes">Desconnecta</button></div>
         <span class="confirma" id="confSy"><span id="confSyTxt"></span> <button class="btn sm" id="bSyIni1">Porta aquí les del Sheets</button><button class="btn sm del" id="bSyIni2">Envia-hi les d'aquí</button></span>
+        <h3 style="margin-top:18px">Contrasenya i seguretat</h3>
+        <p>Les dades d'aquest ordinador es guarden xifrades. <span id="segRec"></span></p>
+        <div class="bar"><button class="btn" id="bCanviPw">Canvia la contrasenya</button><button class="btn" id="bNouCodi">Nou codi de recuperació</button><button class="btn" id="bRecorda"></button></div>
+        <div id="canviBox" hidden><div class="syfila"><label>Contrasenya actual<input type="password" id="pwA" autocomplete="current-password"></label><label>Contrasenya nova (mínim 8)<input type="password" id="pwB1" autocomplete="new-password"></label><label>Repeteix-la<input type="password" id="pwB2" autocomplete="new-password"></label></div><div class="bar"><button class="btn pri" id="bCanviSi">Desa la contrasenya</button><button class="btn" id="bCanviNo">Cancel·la</button></div></div>
+        <div id="nouCodiBox" hidden><p><b>Codi de recuperació nou</b> (l'anterior ja no serveix en aquest ordinador). Guarda'l fora d'aquest ordinador.</p><div class="pcodi" id="nouCodiTxt"></div></div>
+        <div class="bar" style="margin-top:6px"><button class="btn del" id="bSurt">Surt i esborra d'aquest ordinador</button></div>
+        <span class="confirma" id="confSurt"><span id="confSurtTxt"></span> <button class="btn sm del" id="bSurtSi">Sí, esborra i surt</button><button class="btn sm" id="bSurtNo">No</button></span>
         <h3 style="margin-top:18px">Còpia de seguretat</h3>
-        <p>Les dades es desen en aquest navegador (i al Sheets, si està connectat). Desa també una còpia de tant en tant i guarda-la al Drive de l'institut.</p>
+        <p>Desa també una còpia de tant en tant i guarda-la al Drive de l'institut. Atenció: el fitxer de còpia no va xifrat.</p>
         <div class="bar"><button class="btn ok" id="bDesa">⤓ Desa la còpia (tot)</button><button class="btn ok" id="bCarrega">⤒ Carrega una còpia</button></div>
         <input type="file" id="fCopia" accept=".json" hidden>
         <span class="confirma" id="confCopia">Això substitueix totes les dades d'aquest navegador. <button class="btn sm del" id="bCopiaSi">Sí, substitueix</button><button class="btn sm" id="bCopiaNo">No</button></span>
@@ -393,8 +476,7 @@ const TIPUS=['Examen','Exercici de classe','Deures','Simulacre','Pràctica','Tre
 /* ====================== estat ====================== */
 const KEY='quadern-notes-v3';
 let D={versio:3,cfg:{institut:'',professor:'',curs:''},grups:[],acts:[],regs:{},ui:{grup:null,act:null,tab:'notes',al:0}};
-try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.versio===3)D=s}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){avisa('No s\'ha pogut desar al navegador. Fes una còpia de seguretat.')}if(typeof programaSync==='function')programaSync()};
+const save=()=>{if(typeof programaDesat==='function')programaDesat();if(typeof programaSync==='function')programaSync()};
 const G=()=>D.grups.find(g=>g.id===D.ui.grup)||null;
 const A=()=>D.acts.find(a=>a.id===D.ui.act)||null;
 const actsDe=gid=>D.acts.filter(a=>a.grups.includes(gid)).sort((a,b)=>(a.data||'').localeCompare(b.data||'')||a.titol.localeCompare(b.titol));
@@ -861,7 +943,7 @@ function construeixGrups(){
 }
 
 /* ====================== ⚙ DADES ====================== */
-function construeixDades(){$('cfgInst').value=D.cfg.institut||'';$('cfgProf').value=D.cfg.professor||'';$('cfgCurs').value=D.cfg.curs||'';$('syUrl').value=SY.url||'';$('syClau').value=SY.token||'';pintaSyInfo()}
+function construeixDades(){pintaSeg();$('cfgInst').value=D.cfg.institut||'';$('cfgProf').value=D.cfg.professor||'';$('cfgCurs').value=D.cfg.curs||'';$('syUrl').value=SY.url||'';$('syClau').value=SY.token||'';pintaSyInfo()}
 $('bDesaCfg').onclick=()=>{D.cfg.institut=$('cfgInst').value.trim();D.cfg.professor=$('cfgProf').value.trim();D.cfg.curs=$('cfgCurs').value.trim();save();pintaSels();avisa('Desat.')};
 function desaCopia(){const n=D.grups.reduce((s,g)=>s+g.alumnes.length,0);baixa(new Blob([JSON.stringify({app:'quadern-notes',...D},null,1)],{type:'application/json'}),`quadern_copia_${stamp()}.json`);avisa(`Còpia desada: ${D.grups.length} grups, ${n} alumnes, ${D.acts.length} activitats. Guarda-la al Drive de l'institut, mai a GitHub.`)}
 $('bDesa').onclick=desaCopia;$('bDesaRapid').onclick=desaCopia;
@@ -893,8 +975,7 @@ confirma('bEsborraTot','confTot','bTotSi','bTotNo',()=>{D={versio:3,cfg:{institu
 /* ====================== ☁ GOOGLE SHEETS ====================== */
 const KS='quadern-sheets';
 var SY={url:'',token:'',desat:'',hash:''};
-try{Object.assign(SY,JSON.parse(localStorage.getItem(KS))||{})}catch(e){}
-const desaSY=()=>{try{localStorage.setItem(KS,JSON.stringify(SY))}catch(e){}};
+const desaSY=()=>programaDesat();
 const connectat=()=>!!(SY&&SY.url&&SY.token);
 const dadesSync=()=>({versio:3,cfg:D.cfg,grups:D.grups,acts:D.acts,regs:D.regs});
 function hashD(){const s=JSON.stringify(dadesSync());let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h.toString(36)+'.'+s.length}
@@ -937,7 +1018,6 @@ function mostraConflicte(desat){
 }
 function aplicaRemota(j){
   const ui=D.ui;D={versio:3,cfg:j.D.cfg||{},grups:j.D.grups||[],acts:j.D.acts||[],regs:j.D.regs||{},ui};
-  try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}
   SY.desat=j.desat;SY.hash=hashD();desaSY();$('syConf').hidden=true;refresca();
   estatSync('✓ Dades carregades del Sheets ('+horaDe(j.desat)+')','ok');
 }
@@ -981,10 +1061,125 @@ async function iniciSync(){
   }catch(e){estatSync('⚠ '+errTxt(e)+' Treballes en aquest navegador; es desarà quan torni la connexió.','ko')}
 }
 
+
+/* ====================== 🔒 BLOQUEIG AMB CONTRASENYA ====================== */
+const KV='quadern-segur',KR='quadern-recorda',ITER=250000;
+let V=null,DK=null,DKraw=null,dT=null,pendentMig=null;
+const tenc=new TextEncoder(),tdec=new TextDecoder();
+function b64(buf){const u=buf instanceof Uint8Array?buf:new Uint8Array(buf);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)}
+const ub64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const rnd=n=>crypto.getRandomValues(new Uint8Array(n));
+const normCodi=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function nouCodi(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',b=rnd(20);let s='';b.forEach((x,i)=>{s+=A[x%32];if(i%4===3&&i<19)s+='-'});return s}
+async function kek(secret,salt){const base=await crypto.subtle.importKey('raw',tenc.encode(secret),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:ITER,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function xifra(key,bytes){const iv=rnd(12);return {iv:b64(iv),ct:b64(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,bytes))}}
+async function desxifra(key,o){return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64(o.iv)},key,ub64(o.ct)))}
+const importaDK=raw=>crypto.subtle.importKey('raw',raw,'AES-GCM',false,['encrypt','decrypt']);
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}};
+const lsDel=k=>{try{localStorage.removeItem(k)}catch(e){}};
+async function emboliPw(pw){const salt=rnd(16);V.saltP=b64(salt);V.wrapP=await xifra(await kek(pw,salt),DKraw)}
+async function emboliCodi(codi){const salt=rnd(16);V.saltR=b64(salt);V.wrapR=await xifra(await kek(normCodi(codi),salt),DKraw)}
+async function desaAra(){
+  clearTimeout(dT);dT=null;if(!DK||!V)return;
+  try{V.data=await xifra(DK,tenc.encode(JSON.stringify({D,SY})));if(!lsSet(KV,JSON.stringify(V)))throw 0}
+  catch(e){avisa("No s'ha pogut desar en aquest ordinador. Fes una còpia de seguretat.")}
+}
+function programaDesat(){if(!DK)return;clearTimeout(dT);dT=setTimeout(desaAra,250)}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&dT)desaAra()});
+window.addEventListener('pagehide',()=>{if(dT)desaAra()});
+async function obreAmbDK(raw){
+  DKraw=raw;DK=await importaDK(raw);
+  if(V.data){const j=JSON.parse(tdec.decode(await desxifra(DK,V.data)));if(j.D&&j.D.versio===3)D=j.D;if(j.SY)SY=Object.assign({url:'',token:'',desat:'',hash:''},j.SY)}
+}
+function vista(id){['pEntra','pCrea','pCodi','pRec'].forEach(x=>$(x).hidden=x!==id);const f=$(id).querySelector('input:not([type=checkbox])');if(f)setTimeout(()=>f.focus(),30)}
+function mostraPany(){$('app').hidden=true;$('pany').hidden=false}
+let appOberta=false;
+function obreApp(){
+  $('pany').hidden=true;$('app').hidden=false;['pwE','pw1','pw2','pwN1','pwN2','codiIn','codiCrea'].forEach(x=>$(x).value='');
+  if(appOberta)return;appOberta=true;
+  refresca();if(location.hash)mostra(location.hash.slice(1));iniciSync();
+}
+async function arrenca(){
+  if(!(window.crypto&&crypto.subtle)){$('pany').hidden=false;$('errCrypto').hidden=false;return}
+  try{V=JSON.parse(lsGet(KV))}catch(e){V=null}
+  if(V&&V.wrapP){
+    const rec=lsGet(KR);
+    if(rec){try{await obreAmbDK(ub64(rec));obreApp();return}catch(e){lsDel(KR);DK=null}}
+    mostraPany();vista('pEntra');return;
+  }
+  // primer cop: hi ha dades sense protegir?
+  let s=null;try{s=JSON.parse(lsGet(KEY))}catch(e){}
+  let sy=null;try{sy=JSON.parse(lsGet(KS))}catch(e){}
+  pendentMig={D:s&&s.versio===3?s:null,SY:sy};
+  $('creaTxt').innerHTML=pendentMig.D?"<b>Ara les notes d'aquest ordinador es guarden sense protegir.</b> Tria una contrasenya i a partir d'ara es guardaran xifrades.":"<b>Primer cop en aquest ordinador.</b> Tria una contrasenya per protegir el quadern. Pot ser la mateixa que fas servir als altres ordinadors.";
+  $('v2box').hidden=!lsGet('notes-cinematica-v2');
+  mostraPany();vista('pCrea');
+}
+$('pEntra').onsubmit=async ev=>{ev.preventDefault();$('errE').textContent='Comprovant…';
+  try{const raw=await desxifra(await kek($('pwE').value,ub64(V.saltP)),V.wrapP);await obreAmbDK(raw);if($('recE').checked)lsSet(KR,b64(raw));$('errE').textContent='';obreApp()}
+  catch(e){DK=null;$('errE').textContent='Contrasenya incorrecta.';$('pwE').select()}};
+$('pCrea').onsubmit=async ev=>{ev.preventDefault();
+  const p1=$('pw1').value,p2=$('pw2').value,cc=$('codiCrea').value.trim();
+  if(p1.length<8){$('errC').textContent='La contrasenya ha de tenir almenys 8 caràcters.';return}
+  if(p1!==p2){$('errC').textContent='Les dues contrasenyes no coincideixen.';return}
+  if(cc&&normCodi(cc).length!==20){$('errC').textContent='El codi de recuperació ha de tenir 20 lletres i números.';return}
+  $('errC').textContent='Protegint…';
+  DKraw=rnd(32);DK=await importaDK(DKraw);V={v:1,iter:ITER};
+  const codi=cc?cc.toUpperCase():nouCodi();
+  await emboliPw(p1);await emboliCodi(codi);
+  if(pendentMig&&pendentMig.D)D=pendentMig.D;
+  if(pendentMig&&pendentMig.SY)SY=Object.assign({url:'',token:'',desat:'',hash:''},pendentMig.SY);
+  await desaAra();
+  if(!lsGet(KV)){$('errC').textContent="No s'ha pogut desar en aquest navegador.";return}
+  lsDel(KEY);lsDel(KS);if(!$('v2box').hidden&&$('esbV2').checked)lsDel('notes-cinematica-v2');
+  if($('recC').checked)lsSet(KR,b64(DKraw));
+  $('errC').textContent='';
+  if(cc){obreApp();avisa('Quadern protegit amb el teu codi de recuperació de sempre.');return}
+  $('codiTxt').textContent=codi;$('codiOk').checked=false;$('bCodiFet').disabled=true;vista('pCodi');
+};
+$('bCopiaCodi').onclick=async()=>{const t=$('codiTxt').textContent;try{await navigator.clipboard.writeText(t);$('codiMsg').textContent='Copiat.'}catch(e){const r=document.createRange();r.selectNodeContents($('codiTxt'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('codiMsg').textContent='Seleccionat: prem Ctrl+C.'}};
+$('codiOk').onchange=e=>$('bCodiFet').disabled=!e.target.checked;
+$('bCodiFet').onclick=()=>{$('codiTxt').textContent='';obreApp()};
+$('aOblit').onclick=()=>{$('errR').textContent='';vista('pRec')};
+$('aTorna').onclick=()=>vista('pEntra');
+$('fRecCodi').onsubmit=async ev=>{ev.preventDefault();
+  const c=$('codiIn').value,p1=$('pwN1').value,p2=$('pwN2').value;
+  if(p1.length<8){$('errR').textContent='La contrasenya ha de tenir almenys 8 caràcters.';return}
+  if(p1!==p2){$('errR').textContent='Les dues contrasenyes no coincideixen.';return}
+  $('errR').textContent='Comprovant el codi…';
+  let raw;try{raw=await desxifra(await kek(normCodi(c),ub64(V.saltR)),V.wrapR)}catch(e){$('errR').textContent='El codi no és correcte per a aquest ordinador.';return}
+  await obreAmbDK(raw);await emboliPw(p1);await desaAra();$('errR').textContent='';obreApp();avisa('Contrasenya nova desada.');
+};
+confirma('bReset','confReset','bResetSi','bResetNo',()=>{lsDel(KV);lsDel(KR);V=null;DK=null;D={versio:3,cfg:{institut:'',professor:'',curs:''},grups:[],acts:[],regs:{},ui:{grup:null,act:null,tab:'dades',al:0}};SY={url:'',token:'',desat:'',hash:''};arrenca()});
+async function bloqueja(){if(dT)await desaAra();lsDel(KR);location.reload()}
+$('bBloq').onclick=bloqueja;
+function pintaSeg(){
+  const rec=!!lsGet(KR);
+  $('bRecorda').textContent=rec?"No em recordis en aquest ordinador":"Recorda'm en aquest ordinador";
+  $('segRec').textContent=rec?"Aquest ordinador et recorda: entra sense contrasenya.":"Cada vegada que obris la web et demanarà la contrasenya.";
+}
+$('bRecorda').onclick=()=>{if(lsGet(KR))lsDel(KR);else lsSet(KR,b64(DKraw));pintaSeg()};
+$('bCanviPw').onclick=()=>{$('canviBox').hidden=false;$('pwA').focus()};
+$('bCanviNo').onclick=()=>{$('canviBox').hidden=true;['pwA','pwB1','pwB2'].forEach(x=>$(x).value='')};
+$('bCanviSi').onclick=async()=>{
+  const a=$('pwA').value,b1=$('pwB1').value,b2=$('pwB2').value;
+  try{await desxifra(await kek(a,ub64(V.saltP)),V.wrapP)}catch(e){avisa('La contrasenya actual no és correcta.');return}
+  if(b1.length<8){avisa('La nova ha de tenir almenys 8 caràcters.');return}
+  if(b1!==b2){avisa('Les dues contrasenyes noves no coincideixen.');return}
+  await emboliPw(b1);await desaAra();$('bCanviNo').onclick();avisa('Contrasenya canviada.');
+};
+$('bNouCodi').onclick=async()=>{const c=nouCodi();await emboliCodi(c);await desaAra();$('nouCodiTxt').textContent=c;$('nouCodiBox').hidden=false};
+$('bSurt').onclick=()=>{
+  const pend=connectat()&&hashD()!==SY.hash;
+  $('confSurtTxt').textContent=!connectat()?"El Sheets no està connectat: si esborres, aquestes dades es perden (fes abans una còpia de seguretat). Segur?":pend?"Hi ha canvis que encara no s'han desat al Sheets. Segur?":"Tot està desat al Sheets. S'esborrarà d'aquest ordinador.";
+  $('confSurt').classList.add('on');
+};
+$('bSurtNo').onclick=()=>$('confSurt').classList.remove('on');
+$('bSurtSi').onclick=()=>{clearTimeout(dT);dT=null;DK=null;[KV,KR,KEY,KS,'notes-cinematica-v2'].forEach(lsDel);location.replace(location.pathname)};
+
 /* ====================== inici ====================== */
-refresca();
-if(location.hash)mostra(location.hash.slice(1));
-iniciSync();
+arrenca();
 </script>
 </body>
 </html>
