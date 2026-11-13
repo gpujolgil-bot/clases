@@ -101,7 +101,7 @@ dialog.dlgal::backdrop{background:rgba(20,20,26,.45)}
 .dlg .dbtn{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .dlg .dbtn .sp{flex:1}
 .rt .nb{padding:0;font-weight:700}
-.nt tr.isnp td.c input{pointer-events:none}
+.nt tr.isnp td.c input{cursor:text}
 .nt tfoot td{background:var(--bg);font-size:12px;color:var(--soft);padding:6px 4px;font-weight:600}
 .nt tfoot td.nom{background:var(--bg);color:var(--ink)}
 .pc.ko,.pc.mig,.pc.ok{background:transparent}
@@ -619,6 +619,7 @@ function onInput(ev){
   if(el.dataset.obs!==undefined){reg(a.id,g.alumnes[+el.dataset.obs].id,true).obs=el.value;save();return}
   if(el.dataset.j===undefined)return;
   const i=+el.dataset.i,j=+el.dataset.j,p=APS[j],raw=el.value.trim().toLowerCase(),r=reg(a.id,g.alumnes[i].id,true);
+  if(r.np&&raw!==''){r.np=false;avisa(`S'ha tret el NP de ${g.alumnes[i].nom} perquè li has posat nota.`)}
   if(['t','m','q','+','/'].includes(raw)){r.p[p.id]=parse(raw,p.max);el.value=fmt(r.p[p.id],3);save();pinta(i);peuNotes();mou(i,j,1);return}
   const x=parse(raw,p.max);
   if(x==null||isNaN(x)||x<0||x>p.max+1e-9)delete r.p[p.id];else r.p[p.id]=x;
